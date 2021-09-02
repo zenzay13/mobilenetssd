@@ -43,8 +43,8 @@ def index():
     return render_template('index.html')
 
 
-def process_file(path, filename):
-    detect_object(path, filename)
+#def process_file(path, filename):
+#    detect_object(path, filename)
     
 
 def detect_object(path, filename):    
