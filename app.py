@@ -21,7 +21,8 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/', methods=['GET', 'POST'])
+#@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
 #    if request.method == 'POST':
 #        if 'file' not in request.files:
@@ -40,8 +41,8 @@ def index():
 #                "uploaded_img":'static/uploads/'+filename
 #            }
 #            return render_template("index.html",data=data)  
-    return render_template('index.html')
-
+#    return render_template('index.html')
+    return "test"
 
 #def process_file(path, filename):
 #    detect_object(path, filename)
