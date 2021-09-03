@@ -47,7 +47,7 @@ def index():
 #def process_file(path, filename):
 #    detect_object(path, filename)
     
-
+'''
 def detect_object(path, filename):    
     CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
         "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
@@ -80,7 +80,7 @@ def detect_object(path, filename):
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
     cv2.imwrite(f"{DOWNLOAD_FOLDER}{filename}",image)
-  
+'''  
 # download 
 # @app.route('/uploads/<filename>')
 # def uploaded_file(filename):
