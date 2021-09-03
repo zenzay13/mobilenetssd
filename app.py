@@ -3,13 +3,13 @@ from flask import Flask, request, redirect, url_for, render_template, send_from_
 #from werkzeug.utils import secure_filename
 #import cv2
 #import numpy as np
-'''
+
 UPLOAD_FOLDER ='static/uploads/'
 DOWNLOAD_FOLDER = 'static/downloads/'
 ALLOWED_EXTENSIONS = {'jpg', 'png','.jpeg'}
 app = Flask(__name__, static_url_path="/static")
 
-
+'''
 # APP CONFIGURATIONS
 app.config['SECRET_KEY'] = 'opencv'  
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
