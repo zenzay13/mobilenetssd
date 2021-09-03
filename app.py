@@ -9,7 +9,6 @@ DOWNLOAD_FOLDER = 'static/downloads/'
 ALLOWED_EXTENSIONS = {'jpg', 'png','.jpeg'}
 app = Flask(__name__, static_url_path="/static")
 
-'''
 # APP CONFIGURATIONS
 app.config['SECRET_KEY'] = 'opencv'  
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -19,35 +18,33 @@ app.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-'''
 
-#@app.route('/', methods=['GET', 'POST'])
-@app.route('/')
+
+@app.route('/', methods=['GET', 'POST'])
 def index():
-#    if request.method == 'POST':
-#        if 'file' not in request.files:
-#            flash('No file attached in request')
-#            return redirect(request.url)
-#        file = request.files['file']
-#        if file.filename == '':
-#            flash('No file selected')
-#            return redirect(request.url)
-#        if file and allowed_file(file.filename):
-#            filename = secure_filename(file.filename)
-#            file.save(os.path.join(UPLOAD_FOLDER, filename))
-#            process_file(os.path.join(UPLOAD_FOLDER, filename), filename)
-#            data={
-#                "processed_img":'static/downloads/'+filename,
-#                "uploaded_img":'static/uploads/'+filename
-#            }
-#            return render_template("index.html",data=data)  
-#    return render_template('index.html')
-    return "test"
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file attached in request')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No file selected')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(UPLOAD_FOLDER, filename))
+            process_file(os.path.join(UPLOAD_FOLDER, filename), filename)
+            data={
+                "processed_img":'static/downloads/'+filename,
+                "uploaded_img":'static/uploads/'+filename
+            }
+            return render_template("index.html",data=data)  
+    return render_template('index.html')
 
-#def process_file(path, filename):
-#    detect_object(path, filename)
+def process_file(path, filename):
+    detect_object(path, filename)
     
-'''
+
 def detect_object(path, filename):    
     CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
         "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
@@ -80,7 +77,7 @@ def detect_object(path, filename):
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
     cv2.imwrite(f"{DOWNLOAD_FOLDER}{filename}",image)
-'''  
+
 # download 
 # @app.route('/uploads/<filename>')
 # def uploaded_file(filename):
