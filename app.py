@@ -1,13 +1,28 @@
 import os
-from flask import Flask, request, redirect, url_for, render_template, send_from_directory,flash 
+from flask import Flask, request, redirect, url_for, render_template, send_from_directory, flash, jsonify
 from werkzeug.utils import secure_filename
 import cv2
 import numpy as np
+import os
+import json
+import requests
+
+from linebot.models import (
+    MessageEvent, TextMessage, TextSendMessage,TemplateSendMessage,ImageSendMessage, StickerSendMessage, AudioSendMessage
+)
+from linebot.models.template import *
+from linebot import (
+    LineBotApi, WebhookHandler
+)
+
+app = Flask(__name__, static_url_path="/static")
 
 UPLOAD_FOLDER ='static/uploads/'
 DOWNLOAD_FOLDER = 'static/downloads/'
 ALLOWED_EXTENSIONS = {'jpg', 'png','.jpeg'}
-app = Flask(__name__, static_url_path="/static")
+
+lineaccesstoken = '833wmgC5++/Cm5YQ7vqL5K4T4PsNUzn8xuSEqhdM1rBTZx9ASXos87YideW6NGDzTYP5WYUnI3BQ2SVoPMa+oP0RiixTAkR6yVpjO8+IQD5sjClu5O11oIoS+k5ini1QG08/BVLw7ukx+tOUeTMmfQdB04t89/1O/w1cDnyilFU='
+line_bot_api = LineBotApi(lineaccesstoken)
 
 # APP CONFIGURATIONS
 app.config['SECRET_KEY'] = 'opencv'  
@@ -18,7 +33,6 @@ app.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -41,12 +55,12 @@ def index():
             return render_template("index.html",data=data)  
     return render_template('index.html')
 
+
 def process_file(path, filename):
     detect_object(path, filename)
     
-
 def detect_object(path, filename):    
-    CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
+    CLASSES = ["background", "aeroplane", "bicycle", "boat",
         "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
         "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
         "sofa", "train", "tvmonitor"]
@@ -78,10 +92,52 @@ def detect_object(path, filename):
 
     cv2.imwrite(f"{DOWNLOAD_FOLDER}{filename}",image)
 
-# download 
-# @app.route('/uploads/<filename>')
-# def uploaded_file(filename):
-#     return send_from_directory(app.config['DOWNLOAD_FOLDER'], filename, as_attachment=True)
+@app.route('/callback', methods=['POST'])
+def callback():
+    json_line = request.get_json(force=False,cache=False)
+    json_line = json.dumps(json_line)
+    decoded = json.loads(json_line)
+    no_event = len(decoded['events'])
+    #no_event = len(decoded['originalDetectIntentRequest'])
+    for i in range(no_event):
+        event = decoded['events'][i]
+        #event = decoded['originalDetectIntentRequest'][i]
+        event_handle(event)
+    return '',200
+
+def event_handle(event):
+    print(event)
+    try:
+        userId = event['source']['userId']
+    except:
+        print('error cannot get userId')
+        return ''
+
+    try:
+        rtoken = event['replyToken']
+    except:
+        print('error cannot get rtoken')
+        return ''
+    try:
+        msgId = event["message"]["id"]
+        msgType = event["message"]["type"]
+    except:
+        print('error cannot get msgID, and msgType')
+        sk_id = np.random.randint(1,17)
+        replyObj = StickerSendMessage(package_id=str(1),sticker_id=str(sk_id))
+        line_bot_api.reply_message(rtoken, replyObj)
+        return ''
+
+    if msgType == "text":
+        msg = str(event["message"]["text"])
+        replyObj = TextSendMessage(text=msg)
+        line_bot_api.reply_message(rtoken, replyObj)
+
+    else:
+        sk_id = np.random.randint(1,17)
+        replyObj = StickerSendMessage(package_id=str(1),sticker_id=str(sk_id))
+        line_bot_api.reply_message(rtoken, replyObj)
+    return ''
 
 if __name__ == '__main__':
     app.run()
