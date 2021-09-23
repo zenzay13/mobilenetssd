@@ -100,12 +100,20 @@ def callback():
     json_line = json.dumps(json_line)
     decoded = json.loads(json_line)
     no_event = len(decoded['events'])
-    #no_event = len(decoded['originalDetectIntentRequest'])
     for i in range(no_event):
         event = decoded['events'][i]
-        #event = decoded['originalDetectIntentRequest'][i]
         event_handle(event)
+#    intent = decoded["queryResult"]["intent"]["displayName"] 
+#    text = decoded['originalDetectIntentRequest']['payload']['data']['message']['text'] 
+#    reply_token = decoded['originalDetectIntentRequest']['payload']['data']['replyToken']
+#    id = decoded['originalDetectIntentRequest']['payload']['data']['source']['userId']
+#    disname = line_bot_api.get_profile(id).display_name
+#    reply(intent,text,reply_token,id,disname)
     return '',200
+
+def reply(intent,text,reply_token,id,disname):
+    text_message = TextSendMessage(text="ทดสอบ")
+    line_bot_api.reply_message(reply_token,text_message)
 
 def event_handle(event):
     print(event)
