@@ -99,10 +99,13 @@ def callback():
     json_line = request.get_json(force=False,cache=False)
     json_line = json.dumps(json_line)
     decoded = json.loads(json_line)
+    
+    # เช่ื่อมต่อกับ Line Messaging API
     no_event = len(decoded['events'])
     for i in range(no_event):
         event = decoded['events'][i]
         event_handle(event)
+    # เชื่อมต่อกับ DialogFlow
 #    intent = decoded["queryResult"]["intent"]["displayName"] 
 #    text = decoded['originalDetectIntentRequest']['payload']['data']['message']['text'] 
 #    reply_token = decoded['originalDetectIntentRequest']['payload']['data']['replyToken']
