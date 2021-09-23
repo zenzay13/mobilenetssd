@@ -105,13 +105,15 @@ def callback():
     for i in range(no_event):
         event = decoded['events'][i]
         event_handle(event)
+        
     # เชื่อมต่อกับ DialogFlow
-#    intent = decoded["queryResult"]["intent"]["displayName"] 
-#    text = decoded['originalDetectIntentRequest']['payload']['data']['message']['text'] 
-#    reply_token = decoded['originalDetectIntentRequest']['payload']['data']['replyToken']
-#    id = decoded['originalDetectIntentRequest']['payload']['data']['source']['userId']
-#    disname = line_bot_api.get_profile(id).display_name
-#    reply(intent,text,reply_token,id,disname)
+    #intent = decoded["queryResult"]["intent"]["displayName"] 
+    #text = decoded['originalDetectIntentRequest']['payload']['data']['message']['text'] 
+    #reply_token = decoded['originalDetectIntentRequest']['payload']['data']['replyToken']
+    #id = decoded['originalDetectIntentRequest']['payload']['data']['source']['userId']
+    #disname = line_bot_api.get_profile(id).display_name
+    #reply(intent,text,reply_token,id,disname)
+
     return '',200
 
 def reply(intent,text,reply_token,id,disname):
