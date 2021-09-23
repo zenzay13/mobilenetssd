@@ -21,9 +21,9 @@ UPLOAD_FOLDER ='static/uploads/'
 DOWNLOAD_FOLDER = 'static/downloads/'
 ALLOWED_EXTENSIONS = {'jpg', 'png','.jpeg'}
 
-#####
+
 lineaccesstoken = 'คัดลอก Channel Access Token จากไลน์มาใส่'
-#####
+
 line_bot_api = LineBotApi(lineaccesstoken)
 
 # APP CONFIGURATIONS
@@ -100,13 +100,13 @@ def callback():
     json_line = json.dumps(json_line)
     decoded = json.loads(json_line)
     
-    # เช่ื่อมต่อกับ Line Messaging API
+    # เชื่อมต่อกับ line 
     no_event = len(decoded['events'])
     for i in range(no_event):
-        event = decoded['events'][i]
-        event_handle(event)
-        
-    # เชื่อมต่อกับ DialogFlow
+            event = decoded['events'][i]
+            event_handle(event)
+
+    # เชื่อมต่อกับ dialogflow
     #intent = decoded["queryResult"]["intent"]["displayName"] 
     #text = decoded['originalDetectIntentRequest']['payload']['data']['message']['text'] 
     #reply_token = decoded['originalDetectIntentRequest']['payload']['data']['replyToken']
