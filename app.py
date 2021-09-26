@@ -3,12 +3,17 @@ from flask import Flask, request, redirect, url_for, render_template, send_from_
 from werkzeug.utils import secure_filename
 import cv2
 import numpy as np
-import os
 import json
 import requests
+import tempfile, shutil, os
+from PIL import Image
+from io import BytesIO
 
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,TemplateSendMessage,ImageSendMessage, StickerSendMessage, AudioSendMessage
+    TemplateSendMessage, AudioSendMessage,
+    MessageEvent, TextMessage, TextSendMessage,
+    SourceUser, PostbackEvent, StickerMessage, StickerSendMessage, 
+    LocationMessage, LocationSendMessage, ImageMessage, ImageSendMessage
 )
 from linebot.models.template import *
 from linebot import (
@@ -22,7 +27,7 @@ DOWNLOAD_FOLDER = 'static/downloads/'
 ALLOWED_EXTENSIONS = {'jpg', 'png','.jpeg'}
 
 
-lineaccesstoken = 'คัดลอก Channel Access Token จากไลน์มาใส่'
+lineaccesstoken = '833wmgC5++/Cm5YQ7vqL5K4T4PsNUzn8xuSEqhdM1rBTZx9ASXos87YideW6NGDzTYP5WYUnI3BQ2SVoPMa+oP0RiixTAkR6yVpjO8+IQD5sjClu5O11oIoS+k5ini1QG08/BVLw7ukx+tOUeTMmfQdB04t89/1O/w1cDnyilFU='
 
 line_bot_api = LineBotApi(lineaccesstoken)
 
@@ -62,7 +67,7 @@ def process_file(path, filename):
     detect_object(path, filename)
     
 def detect_object(path, filename):    
-    CLASSES = ["background", "aeroplane", "bicycle", "boat",
+    CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
         "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
         "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
         "sofa", "train", "tvmonitor"]
@@ -147,6 +152,27 @@ def event_handle(event):
         msg = str(event["message"]["text"])
         replyObj = TextSendMessage(text=msg)
         line_bot_api.reply_message(rtoken, replyObj)
+    elif msgType == "image":
+        try:
+            message_content = line_bot_api.get_message_content(event['message']['id'])
+            i = Image.open(BytesIO(message_content.content))
+            filename = event['message']['id'] + '.jpg'
+            i.save(UPLOAD_FOLDER + filename)
+            process_file(os.path.join(UPLOAD_FOLDER, filename), filename)
+
+            url = request.url_root + DOWNLOAD_FOLDER + filename
+            
+            line_bot_api.reply_message(
+                rtoken, [
+                    TextSendMessage(text='Object detection result:'),
+                    ImageSendMessage(url,url)
+                ])    
+    
+        except:
+            message = TextSendMessage(text="เกิดข้อผิดพลาด กรุณาส่งใหม่อีกครั้ง")
+            line_bot_api.reply_message(event.reply_token, message)
+
+            return 0
 
     else:
         sk_id = np.random.randint(1,17)
